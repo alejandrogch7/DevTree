@@ -1,14 +1,25 @@
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
+import ErrorMessage from "../components/ErrorMessage"
+import { RegisterForm } from "../types/intex"
 
 
 export default function RegisterView() {
-  const { register, watch, handleSubmit, formState: { errors } } = useForm()
-  
-  console.log(errors)
 
-  const handleRegister = () => {
-    console.log('I control from here')
+  const initialValues : RegisterForm = {
+    name: '',
+    email: '',
+    handle: '',
+    password: '',
+    password_confirmation: ''
+  }
+
+  const { register, watch, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
+
+  const password = watch('password')
+
+  const handleRegister = (formData : RegisterForm) => {
+    console.log(formData)
   }
 
   return (
@@ -26,8 +37,9 @@ export default function RegisterView() {
             type="text"
             placeholder="Your Name"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register('name',{required:"The name is mandatory"})}
+            {...register('name', { required: "The name is mandatory" })}
           />
+          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
         </div>
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="email" className="text-2xl text-slate-500">E-mail</label>
@@ -36,8 +48,17 @@ export default function RegisterView() {
             type="email"
             placeholder="Your Email Address"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register('email',{required:"The e-mail is mandatory"})}
+            {...register('email',
+              {
+                required: "The e-mail is mandatory",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "The E-mail is not valid",
+                },
+              }
+            )}
           />
+          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </div>
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="handle" className="text-2xl text-slate-500">Username</label>
@@ -46,8 +67,9 @@ export default function RegisterView() {
             type="text"
             placeholder="Username (with no spaces)"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register('handle',{required:"The username is mandatory"})}
+            {...register('handle', { required: "The username is mandatory" })}
           />
+          {errors.handle && <ErrorMessage>{errors.handle.message}</ErrorMessage>}
         </div>
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="password" className="text-2xl text-slate-500">Password</label>
@@ -56,8 +78,15 @@ export default function RegisterView() {
             type="password"
             placeholder="Your Password"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register('password',{required:"The password is mandatory"})}
+            {...register('password', { 
+              required: "The password is mandatory",
+              minLength: {
+                value: 8,
+                message: "The password must be at least eight characters"
+              } 
+            })}
           />
+          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </div>
 
         <div className="grid grid-cols-1 space-y-3">
@@ -67,8 +96,12 @@ export default function RegisterView() {
             type="password"
             placeholder="Repeat your Password"
             className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-            {...register('password_confirmation',{required:"The password confirmation is mandatory"})}
+            {...register('password_confirmation', { 
+              required: "The password confirmation is mandatory",
+              validate: (value) => value===password || "Passwords don't match" 
+            })}
           />
+          {errors.password_confirmation && <ErrorMessage>{errors.password_confirmation.message}</ErrorMessage>}
         </div>
 
         <input

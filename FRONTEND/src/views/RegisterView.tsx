@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { isAxiosError } from "axios"
 import ErrorMessage from "../components/ErrorMessage"
-import { RegisterForm } from "../types/intex"
+import { RegisterForm } from "../types"
 import { toast } from "sonner"
 import api from "../config/axios"
 
